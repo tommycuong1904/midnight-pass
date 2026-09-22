@@ -1,0 +1,31 @@
+{
+  "name": "midnight-pass",
+  "version": "1.0.0",
+  "description": "Zero-Knowledge Confidential Credential & Eligibility Gate on Midnight Network",
+  "main": "contract/managed/midnight_pass/contract/index.js",
+  "scripts": {
+    "compile": "compact compile contract/src/midnight_pass.compact contract/managed/midnight_pass",
+    "test": "vitest run",
+    "build": "npm run compile && cd frontend && npm run build",
+    "lint": "tsc --noEmit"
+  },
+  "keywords": [
+    "midnight",
+    "compact",
+    "zero-knowledge",
+    "zk-proofs",
+    "privacy",
+    "credentials",
+    "nullifier"
+  ],
+  "author": "KaWin Projects",
+  "license": "MIT",
+  "dependencies": {
+    "@midnight-ntwrk/compact-runtime": "0.16.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  }
+}

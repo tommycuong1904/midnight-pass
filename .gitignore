@@ -1,0 +1,11 @@
+# Node modules
+node_modules/
+frontend/node_modules/
+
+# Build & compiled outputs
+dist/
+frontend/dist/
+
+# System & OS files
+.DS_Store
+*.log
