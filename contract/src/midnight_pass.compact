@@ -1,0 +1,91 @@
+pragma language_version >= 0.20;
+
+import CompactStandardLibrary;
+
+export ledger issuer: Bytes<32>;
+export ledger credentials: Map<Bytes<32>, Boolean>;
+export ledger nullifiers: Map<Bytes<32>, Boolean>;
+export ledger totalIssued: Counter;
+export ledger totalVerified: Counter;
+
+witness localSecretKey(): Bytes<32>;
+witness getCredentialSecret(): Bytes<32>;
+witness getCredentialNonce(): Bytes<32>;
+witness getCredentialType(): Uint<32>;
+
+export pure circuit publicKey(sk: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "mnpass:pk:"), sk]);
+}
+
+export pure circuit credentialCommitment(
+  holder: Bytes<32>,
+  secret: Bytes<32>,
+  nonce: Bytes<32>,
+  credType: Bytes<32>
+): Bytes<32> {
+  return persistentHash<Vector<5, Bytes<32>>>([
+    pad(32, "mnpass:commit:"),
+    holder,
+    secret,
+    nonce,
+    credType
+  ]);
+}
+
+export pure circuit nullifierHash(
+  holder: Bytes<32>,
+  secret: Bytes<32>,
+  nonce: Bytes<32>,
+  credType: Bytes<32>
+): Bytes<32> {
+  return persistentHash<Vector<5, Bytes<32>>>([
+    pad(32, "mnpass:null:"),
+    holder,
+    secret,
+    nonce,
+    credType
+  ]);
+}
+
+constructor() {
+  issuer = disclose(publicKey(localSecretKey()));
+}
+
+export circuit issueCredential(commitment: Bytes<32>): [] {
+  assert(issuer == publicKey(localSecretKey()), "Only authorized issuer can issue credentials");
+  assert(!credentials.member(disclose(commitment)), "Credential commitment already exists");
+
+  credentials.insert(disclose(commitment), true);
+  totalIssued.increment(1);
+}
+
+export circuit verifyEligibility(credType: Bytes<32>): Boolean {
+  const holderPk = publicKey(localSecretKey());
+  const secret = getCredentialSecret();
+  const nonce = getCredentialNonce();
+
+  // Recompute commitment inside ZK circuit from private witness
+  const commitment = credentialCommitment(holderPk, secret, nonce, credType);
+  assert(credentials.member(disclose(commitment)), "No valid issued credential found for witness");
+
+  // Compute nullifier to prevent double claims/reuse
+  const nullifier = nullifierHash(holderPk, secret, nonce, credType);
+  assert(!nullifiers.member(disclose(nullifier)), "Credential nullifier already used");
+
+  // Record nullifier on-chain without revealing commitment or holder identity
+  nullifiers.insert(disclose(nullifier), true);
+  totalVerified.increment(1);
+
+  return true;
+}
+
+export circuit checkCredentialIssued(commitment: Bytes<32>): Boolean {
+  if (credentials.member(disclose(commitment))) {
+    return credentials.lookup(disclose(commitment));
+  }
+  return false;
+}
+
+export circuit isNullifierUsed(nullifierVal: Bytes<32>): Boolean {
+  return nullifiers.member(disclose(nullifierVal));
+}
