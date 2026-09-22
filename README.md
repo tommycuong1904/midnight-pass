@@ -15,6 +15,7 @@ It allows users to prove identity thresholds (e.g. Age 18+ Gate, VIP DAO Members
 ## 🌐 Live Demo & Deployment Information
 
 * 🚀 **Live dApp URL:** [https://frontend-gold-eight-muqigbzt6r.vercel.app](https://frontend-gold-eight-muqigbzt6r.vercel.app)
+* 📹 **Demo Video:** [`assets/demo_video.mp4`](assets/demo_video.mp4) *(Wallet Connect + Circuit Execution Walkthrough)*
 * 📜 **Preprod Contract Address:** `0x8f3e294b0a1c74d82f5e19b40d6c91a382f7105e492a83f120d9124a985b301c`
 * 🚰 **Testnet Faucet:** [Nethermind Preprod Faucet](https://midnight-tmnight-preprod.nethermind.dev/)
 
