@@ -33,6 +33,16 @@ This repository contains the complete consolidated submission for **Level 1 (New
 
 ---
 
+## 📸 Submission Verification Screenshots
+
+### 1. Compact Compiler Output (`compact compile`)
+![Compact Compile Output](assets/compile_screenshot.png)
+
+### 2. Contract Preprod Deployment Output
+![Preprod Deployment](assets/deploy_screenshot.png)
+
+---
+
 ## 🔒 Privacy Model & Security Analysis
 
 ### What an Observer CAN Learn (On-Chain Public Ledger):
@@ -66,6 +76,9 @@ midnight-pass/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml                 # GitHub Actions CI/CD Pipeline
+├── assets/
+│   ├── compile_screenshot.png     # Compiler Verification Screenshot
+│   └── deploy_screenshot.png      # Preprod Deployment Verification Screenshot
 ├── contract/
 │   ├── src/
 │   │   └── midnight_pass.compact  # Compact Smart Contract (ZK Circuits & Ledger)

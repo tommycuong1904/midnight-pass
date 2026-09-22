@@ -1,0 +1,14 @@
+
+> midnight-pass@1.0.0 test
+> vitest run
+
+
+ RUN  v1.6.1 /root/midnight-pass
+
+ ✓ tests/midnight_pass.test.ts  (5 tests) 282ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  14:40:24
+   Duration  2.13s (transform 409ms, setup 0ms, collect 481ms, tests 282ms, environment 0ms, prepare 514ms)
+

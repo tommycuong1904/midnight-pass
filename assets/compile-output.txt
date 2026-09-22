@@ -1,0 +1,5 @@
+
+> midnight-pass@1.0.0 compile
+> compact compile contract/src/midnight_pass.compact contract/managed/midnight_pass
+
+Compiling 4 circuits:
