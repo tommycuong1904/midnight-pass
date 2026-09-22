@@ -4,10 +4,19 @@
 [![Compact Compiler](https://img.shields.io/badge/Compact-v0.31.1-22d3ee.svg)](https://docs.midnight.network)
 [![CI/CD Pipeline](https://img.shields.io/badge/CI%2FCD-Passing-emerald.svg)](.github/workflows/ci.yml)
 [![Tests](https://img.shields.io/badge/Vitest-5%2F5%20Passing-brightgreen.svg)](tests/midnight_pass.test.ts)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-success.svg)](https://frontend-gold-eight-muqigbzt6r.vercel.app)
 
 **MidnightPass** is a production-grade, privacy-preserving credential issuance and zero-knowledge eligibility gate built for the **Midnight Network** using the **Compact 0.31.1** smart contract language.
 
 It allows users to prove identity thresholds (e.g. Age 18+ Gate, VIP DAO Membership, Confidential Payroll Clearance) **without revealing their personal identity, underlying credentials, or secret keys to any observer**.
+
+---
+
+## 🌐 Live Demo & Deployment Information
+
+* 🚀 **Live dApp URL:** [https://frontend-gold-eight-muqigbzt6r.vercel.app](https://frontend-gold-eight-muqigbzt6r.vercel.app)
+* 📜 **Preprod Contract Address:** `0x8f3e294b0a1c74d82f5e19b40d6c91a382f7105e492a83f120d9124a985b301c`
+* 🚰 **Testnet Faucet:** [Nethermind Preprod Faucet](https://midnight-tmnight-preprod.nethermind.dev/)
 
 ---
 
@@ -38,7 +47,10 @@ This repository contains the complete consolidated submission for **Level 1 (New
 ### 1. Compact Compiler Output (`compact compile`)
 ![Compact Compile Output](assets/compile_screenshot.png)
 
-### 2. Contract Preprod Deployment Output
+### 2. Vitest Simulator Test Suite Output (`npm test`)
+![Vitest Simulator Output](assets/test_screenshot.png)
+
+### 3. Contract Preprod Deployment Output
 ![Preprod Deployment](assets/deploy_screenshot.png)
 
 ---
@@ -66,6 +78,7 @@ This repository contains the complete consolidated submission for **Level 1 (New
 * **Network Target:** Midnight Preprod Testnet
 * **Frontend:** React 18, Vite 5, TailwindCSS, Lucide Icons
 * **Testing:** Vitest 1.6 (Simulator & Circuit Context execution)
+* **Hosting:** Vercel
 
 ---
 
@@ -78,6 +91,7 @@ midnight-pass/
 │       └── ci.yml                 # GitHub Actions CI/CD Pipeline
 ├── assets/
 │   ├── compile_screenshot.png     # Compiler Verification Screenshot
+│   ├── test_screenshot.png        # Vitest Simulator Suite Verification Screenshot
 │   └── deploy_screenshot.png      # Preprod Deployment Verification Screenshot
 ├── contract/
 │   ├── src/
@@ -125,7 +139,7 @@ npm test
 *Runs 5/5 Vitest test cases validating constructor initialization, credential commitment issuance, ZK witness verification, and double-claim nullifier rejection.*
 
 ```
- ✓ tests/midnight_pass.test.ts (5 tests) 426ms
+ ✓ tests/midnight_pass.test.ts (5 tests) 282ms
  Test Files  1 passed (1)
       Tests  5 passed (5)
 ```
@@ -190,16 +204,6 @@ export circuit verifyEligibility(credType: Bytes<32>): Boolean {
   return true;
 }
 ```
-
----
-
-## 📹 Demo & Verification Checklist
-
-### Preprod Deployed Contract Address
-`0x8f3e294b0a1c74d82f5e19b40d6c91a382f7105e492a83f120d9124a985b301c`
-
-### Testnet Faucet
-tNight tokens requested via [Nethermind Preprod Faucet](https://midnight-tmnight-preprod.nethermind.dev/).
 
 ---
 
