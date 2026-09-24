@@ -1,0 +1,5 @@
+{
+  "installCommand": "npm ci && npm --prefix frontend ci",
+  "buildCommand": "curl -sSL https://github.com/midnightntwrk/compact/releases/latest/download/compact-installer.sh | sh && $HOME/.local/bin/compact update 0.31.1 && PATH=$HOME/.local/bin:$PATH npm run build",
+  "outputDirectory": "frontend/dist"
+}
