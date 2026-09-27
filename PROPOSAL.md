@@ -3,7 +3,7 @@
 **Program:** New Moon to Full: Monthly Moonshots on Midnight  
 **Submission Level:** Level 3 (First Quarter)  
 **Project:** MidnightPass  
-**Contract Address (Preprod):** `0x8f3e294b0a1c74d82f5e19b40d6c91a382f7105e492a83f120d9124a985b301c`  
+**Contract Address (Preprod):** Not deployed or verified yet.
 **Live Demo:** [https://frontend-gold-eight-muqigbzt6r.vercel.app](https://frontend-gold-eight-muqigbzt6r.vercel.app)
 
 ---
@@ -63,10 +63,11 @@ MidnightPass strictly separates public ledger state from private witness state t
 - [x] 5/5 passing Vitest test suite covering constructor, credential issuance, ZK proof verification, and double-claim rejection.
 - [x] Automated GitHub Actions CI/CD pipeline (`compile` + `test` + `build`).
 - [x] Web frontend dApp integrated with Midnight DApp Connector API & Lace Wallet.
-- [x] Preprod contract deployment (`0x8f3e294b0a1c74d82f5e19b40d6c91a382f7105e492a83f120d9124a985b301c`).
+- [x] Midnight.js provider pipeline for Indexer queries, wallet-backed proof generation, transaction balancing, and submission.
+- [ ] Verified Preprod contract deployment (requires a confirmed transaction).
 
 ### Phase 2: Testnet Hardening & Multi-Schema Credentials
-- [ ] Direct integration with Midnight Pub-Sub Indexer and Prover Client container.
+- [x] Direct integration with the Midnight Pub-Sub Indexer and Lace proving provider.
 - [ ] Multi-schema credential templates (W3C Verifiable Credentials & JWT import compatibility).
 - [ ] Admin UI for bulk issuer revocation and key rotation management.
 

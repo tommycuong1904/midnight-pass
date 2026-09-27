@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { 
   ShieldCheck, 
   Wallet, 
@@ -10,50 +10,44 @@ import {
   Cpu, 
   Layers, 
   ExternalLink,
-  Sparkles
+  Sparkles,
+  RefreshCw
 } from 'lucide-react';
 
-// Midnight.js SDK Dependencies (Mandatory Midnight.js & DApp Connector imports)
-import type { InitialAPI, ConnectedAPI } from '@midnight-ntwrk/dapp-connector-api';
-import * as MidnightNetworkProvider from '@midnight-ntwrk/midnight-js-network-provider';
-import { contracts as MidnightContracts, types as MidnightTypes } from '@midnight-ntwrk/midnight-js';
-import { 
-  createConstructorContext, 
-  createCircuitContext, 
-  sampleContractAddress 
-} from '@midnight-ntwrk/compact-runtime';
+import type { ConnectedAPI, InitialAPI } from '@midnight-ntwrk/dapp-connector-api';
+import {
+  configuredContractAddress,
+  createPrivateState,
+  deployMidnightPass,
+  issueCredential,
+  verifyEligibility,
+} from './midnight';
 
-// Compiled Midnight Compact ZK Contract Bindings
-import { Contract, pureCircuits } from '../../contract/managed/midnight_pass/contract/index.js';
-
-const DEPLOYED_CONTRACT_ADDRESS = "0x8f3e294b0a1c74d82f5e19b40d6c91a382f7105e492a83f120d9124a985b301c";
 const PREPROD_FAUCET_URL = "https://midnight-tmnight-preprod.nethermind.dev/";
-
-type PrivateState = {
-  secretKey: Uint8Array;
-  credSecret: Uint8Array;
-  credNonce: Uint8Array;
-  credType: Uint8Array;
-};
-
-// Convert string / hex to 32-byte Uint8Array
-function encodeBytes32(str: string): Uint8Array {
-  const bytes = new Uint8Array(32);
-  const encoder = new TextEncoder();
-  const encoded = encoder.encode(str);
-  bytes.set(encoded.slice(0, 32));
-  return bytes;
+function formatDust(amount: bigint): string {
+  const whole = amount / 1_000_000_000_000_000n;
+  const fraction = (amount % 1_000_000_000_000_000n).toString().padStart(15, "0");
+  return `${whole.toLocaleString()}.${fraction}`;
 }
 
-// Convert Uint8Array to hex string
-function bytesToHex(bytes: Uint8Array): string {
-  return "0x" + Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+function findLaceWallet(): InitialAPI | undefined {
+  return Object.values(window.midnight ?? {}).find((wallet) => {
+    const identity = `${wallet.name} ${wallet.rdns}`.toLowerCase();
+    return identity.includes("lace");
+  });
 }
 
 export default function App() {
   const [walletConnected, setWalletConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState("");
   const [connectedApi, setConnectedApi] = useState<ConnectedAPI | null>(null);
+  const [contractAddress, setContractAddress] = useState(configuredContractAddress);
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [deployStatus, setDeployStatus] = useState<string | null>(null);
+  const [walletError, setWalletError] = useState<string | null>(null);
+  const [dustBalance, setDustBalance] = useState<bigint | null>(null);
+  const [dustCap, setDustCap] = useState<bigint | null>(null);
+  const [unshieldedBalances, setUnshieldedBalances] = useState<Array<[string, bigint]>>([]);
   const [activeTab, setActiveTab] = useState<'holder' | 'issuer' | 'privacy'>('holder');
   
   // Holder Form State
@@ -66,39 +60,63 @@ export default function App() {
     nullifier?: string;
     commitment?: string;
     gasCost?: string;
+    txId?: string;
+    blockHeight?: number;
     message?: string;
     timestamp?: string;
   } | null>(null);
 
   // Issuer Form State
-  const [newHolderPk, setNewHolderPk] = useState("0x3f1e92a1884c901a88b209938102377c");
-  const [issueType, setIssueType] = useState("age18");
   const [issueStatus, setIssueStatus] = useState<string | null>(null);
+
+  const hasConfiguredContract = /^[0-9a-fA-F]{64}$/.test(contractAddress.replace(/^0x/, ''));
 
   // Connect Lace Wallet via Midnight DApp Connector API
   const handleConnectWallet = async () => {
-    if (typeof window !== 'undefined' && window.midnight?.lace) {
-      try {
-        const lace = window.midnight.lace as any;
-        const api: ConnectedAPI = typeof lace.connect === 'function' 
-          ? await lace.connect('preprod') 
-          : typeof lace.enable === 'function' 
-          ? await lace.enable() 
-          : null;
-        if (api) {
-          setConnectedApi(api);
-        }
-        setWalletConnected(true);
-        setWalletAddress("preprod1q9v83xklm9201a84f501c92a");
-      } catch (e) {
-        console.warn("Midnight Lace DApp Connector initialization fallback", e);
-        setWalletConnected(true);
-        setWalletAddress("preprod1q9v83xklm9201a84f501c92a");
+    setWalletError(null);
+
+    const lace = findLaceWallet();
+    if (!lace) {
+      const availableWallets = Object.values(window.midnight ?? {})
+        .map((wallet) => wallet.name)
+        .filter(Boolean);
+      const detail = availableWallets.length > 0
+        ? ` Detected wallet providers: ${availableWallets.join(", ")}.`
+        : "";
+      setWalletError(`Lace Wallet was not detected in this browser.${detail}`);
+      return;
+    }
+
+    try {
+      const api = await lace.connect("preprod");
+      if (typeof api.hintUsage === "function") {
+        await api.hintUsage(["getConnectionStatus", "getShieldedAddresses"]);
       }
-    } else {
-      // Midnight DApp Connector API Fallback Session Mode
+      const [connection, address, dust, balances] = await Promise.all([
+        api.getConnectionStatus(),
+        api.getShieldedAddresses(),
+        api.getDustBalance(),
+        api.getUnshieldedBalances(),
+      ]);
+
+      if (connection.status !== "connected" || connection.networkId !== "preprod") {
+        throw new Error("Lace Wallet is not connected to Midnight Preprod.");
+      }
+
+      setConnectedApi(api);
+      setWalletAddress(address.shieldedAddress);
+      setDustBalance(dust.balance);
+      setDustCap(dust.cap);
+      setUnshieldedBalances(Object.entries(balances));
       setWalletConnected(true);
-      setWalletAddress("preprod1q9v83xklm9201a84f501c92a");
+    } catch (error) {
+      setConnectedApi(null);
+      setWalletAddress("");
+      setDustBalance(null);
+      setDustCap(null);
+      setUnshieldedBalances([]);
+      setWalletConnected(false);
+      setWalletError(error instanceof Error ? error.message : "Lace Wallet connection failed.");
     }
   };
 
@@ -106,82 +124,74 @@ export default function App() {
     setWalletConnected(false);
     setWalletAddress("");
     setConnectedApi(null);
+    setDustBalance(null);
+    setDustCap(null);
+    setUnshieldedBalances([]);
+    setWalletError(null);
   };
 
-  // Real ZK Circuit Proof Generation & On-Chain Execution via Midnight Contract SDK
+  const refreshDustBalance = async () => {
+    if (!connectedApi) return;
+
+    try {
+      const [dust, balances] = await Promise.all([
+        connectedApi.getDustBalance(),
+        connectedApi.getUnshieldedBalances(),
+      ]);
+      setDustBalance(dust.balance);
+      setDustCap(dust.cap);
+      setUnshieldedBalances(Object.entries(balances));
+      setWalletError(null);
+    } catch (error) {
+      setWalletError(error instanceof Error ? error.message : "Could not refresh DUST balance.");
+    }
+  };
+
+  const handleDeployContract = async () => {
+    if (!connectedApi) {
+      setDeployStatus('Connect Lace Wallet on Preprod first.');
+      return;
+    }
+    if (!dustBalance || dustBalance <= 0n) {
+      setDeployStatus('A positive Preprod DUST balance is required to deploy.');
+      return;
+    }
+
+    setIsDeploying(true);
+    setDeployStatus('Generating the deployment proof, balancing, and submitting to Preprod...');
+    try {
+      const result = await deployMidnightPass(connectedApi, createPrivateState(userSecret, userNonce));
+      setContractAddress(result.contractAddress);
+      setDeployStatus(`Deployed in block ${result.blockHeight}. Transaction: ${result.txId}`);
+    } catch (error) {
+      setDeployStatus(`Deployment failed: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+      setIsDeploying(false);
+    }
+  };
+
   const handleRunZkProof = async () => {
     setIsProving(true);
     setProofResult(null);
 
     try {
-      // 1. Prepare Uint8Array Witness inputs for local ZK Circuit
-      const secretKey = encodeBytes32("holder_master_secret_key_1");
-      const credSecret = encodeBytes32(userSecret);
-      const credNonce = encodeBytes32(userNonce);
-      const credTypeBytes = encodeBytes32(selectedGate);
+      if (!connectedApi) throw new Error('Connect Lace Wallet on Preprod first.');
+      if (!hasConfiguredContract) throw new Error('Deploy or configure a verified Preprod contract first.');
+      if (!dustBalance || dustBalance <= 0n) throw new Error('A positive DUST balance is required.');
 
-      const privateState: PrivateState = {
-        secretKey,
-        credSecret,
-        credNonce,
-        credType: credTypeBytes
-      };
-
-      // 2. Define Witness functions expected by Compact ZK Contract
-      const witnesses = {
-        localSecretKey: ({ privateState: ps }: { privateState: PrivateState }): [PrivateState, Uint8Array] => [ps, ps.secretKey],
-        getCredentialSecret: ({ privateState: ps }: { privateState: PrivateState }): [PrivateState, Uint8Array] => [ps, ps.credSecret],
-        getCredentialNonce: ({ privateState: ps }: { privateState: PrivateState }): [PrivateState, Uint8Array] => [ps, ps.credNonce],
-        getCredentialType: ({ privateState: ps }: { privateState: PrivateState }): [PrivateState, Uint8Array] => [ps, ps.credType],
-      };
-
-      // 3. Instantiate Midnight Compact Contract
-      const contract = new Contract<PrivateState>(witnesses);
-      const contractAddr = sampleContractAddress();
-
-      // 4. Create Constructor & Initial Circuit Context
-      const initContext = createConstructorContext(privateState, contractAddr);
-      const initialState = contract.initialState(initContext);
-
-      const circuitCtx = createCircuitContext(
-        contractAddr,
-        initialState.currentZswapLocalState,
-        initialState.currentContractState,
-        initialState.currentPrivateState
+      const result = await verifyEligibility(
+        connectedApi,
+        contractAddress.replace(/^0x/, ''),
+        createPrivateState(userSecret, userNonce),
+        selectedGate,
       );
-
-      // 5. Compute ZK Commitment using Pure Circuit
-      const holderPk = pureCircuits.publicKey(secretKey);
-      const commitment = pureCircuits.credentialCommitment(
-        holderPk,
-        credSecret,
-        credNonce,
-        credTypeBytes
-      );
-
-      // 6. Issue Credential to Ledger Context
-      const issueRes = contract.circuits.issueCredential(circuitCtx, commitment);
-
-      // 7. Execute actual verifyEligibility ZK circuit call & generate proofData
-      const verifyRes = contract.circuits.verifyEligibility(issueRes.context, credTypeBytes);
-
-      // 8. Calculate Nullifier Hash via Pure Circuit
-      const nullifierBytes = pureCircuits.nullifierHash(
-        holderPk,
-        credSecret,
-        credNonce,
-        credTypeBytes
-      );
-      const nullifierHex = bytesToHex(nullifierBytes);
-      const commitmentHex = bytesToHex(commitment);
-
-      // 9. Format Proof Execution Output
       setProofResult({
-        success: verifyRes.result,
-        nullifier: nullifierHex,
-        commitment: commitmentHex,
-        gasCost: "0.00042 tNight",
-        message: "Actual Compact ZK Proof locally generated & verified on Midnight Preprod contract!",
+        success: true,
+        nullifier: result.nullifier,
+        commitment: result.commitment,
+        txId: result.txId,
+        blockHeight: result.blockHeight,
+        message: 'Eligibility proof finalized on Midnight Preprod.',
         timestamp: new Date().toLocaleTimeString()
       });
 
@@ -197,27 +207,32 @@ export default function App() {
   };
 
   const handleIssueCredential = async () => {
-    setIssueStatus("Executing issueCredential circuit & broadcasting to Midnight Preprod...");
+    if (!connectedApi) {
+      setIssueStatus("Connect Lace Wallet on Preprod before preparing an issuer transaction.");
+      return;
+    }
+
+    if (!hasConfiguredContract) {
+      setIssueStatus("No verified Preprod contract address is configured. Deploy first, then set VITE_MIDNIGHT_CONTRACT_ADDRESS.");
+      return;
+    }
+
+    if (!dustBalance || dustBalance <= 0n) {
+      setIssueStatus('A positive Preprod DUST balance is required.');
+      return;
+    }
+
+    setIssueStatus('Generating proof and submitting issueCredential to Preprod...');
     try {
-      const secretKey = encodeBytes32("issuer_admin_secret_key");
-      const credSecret = encodeBytes32("admin_generated_secret");
-      const credNonce = encodeBytes32("admin_generated_nonce");
-      const credTypeBytes = encodeBytes32(issueType);
-
-      const holderPkBytes = encodeBytes32(newHolderPk);
-      const commitmentBytes = pureCircuits.credentialCommitment(
-        holderPkBytes,
-        credSecret,
-        credNonce,
-        credTypeBytes
+      const result = await issueCredential(
+        connectedApi,
+        contractAddress.replace(/^0x/, ''),
+        createPrivateState(userSecret, userNonce),
+        selectedGate,
       );
-      const commitmentHex = bytesToHex(commitmentBytes);
-
-      setTimeout(() => {
-        setIssueStatus(`Credential Commitment ${commitmentHex.slice(0, 18)}... successfully written on-chain!`);
-      }, 1200);
-    } catch (e: any) {
-      setIssueStatus(`Issue Error: ${e?.message}`);
+      setIssueStatus(`Credential issued in block ${result.blockHeight}. Transaction: ${result.txId}`);
+    } catch (error) {
+      setIssueStatus(`Credential issue failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 
@@ -239,7 +254,7 @@ export default function App() {
 
         <div className="flex items-center space-x-4">
           <div className="hidden md:flex items-center space-x-2 text-xs text-slate-400 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span className={`w-2 h-2 rounded-full ${walletConnected ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}`}></span>
             <span>Network: <strong className="text-slate-200 font-mono">Preprod</strong></span>
           </div>
 
@@ -270,6 +285,12 @@ export default function App() {
 
       {/* Main Container */}
       <main className="flex-1 max-w-6xl w-full mx-auto p-6 space-y-8">
+        {walletError && (
+          <div className="border border-red-500/40 bg-red-950/30 px-4 py-3 text-sm text-red-200 flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>{walletError}</span>
+          </div>
+        )}
         
         {/* Banner */}
         <section className="bg-gradient-to-r from-indigo-950/60 via-slate-900 to-cyan-950/40 border border-indigo-800/40 rounded-2xl p-6 relative overflow-hidden shadow-2xl">
@@ -303,9 +324,15 @@ export default function App() {
           <div className="flex items-center space-x-2 text-slate-300">
             <Layers className="w-4 h-4 text-indigo-400" />
             <span>Preprod Contract Address:</span>
-            <span className="text-cyan-400 bg-slate-950 px-2 py-1 rounded border border-slate-800">
-              {DEPLOYED_CONTRACT_ADDRESS.slice(0, 16)}...{DEPLOYED_CONTRACT_ADDRESS.slice(-12)}
-            </span>
+            {hasConfiguredContract ? (
+              <span className="text-cyan-400 bg-slate-950 px-2 py-1 rounded border border-slate-800">
+                {contractAddress.slice(0, 16)}...{contractAddress.slice(-12)}
+              </span>
+            ) : (
+              <span className="text-amber-300 bg-amber-950/30 px-2 py-1 rounded border border-amber-800/60">
+                Not deployed or not configured
+              </span>
+            )}
           </div>
           <a 
             href={PREPROD_FAUCET_URL} 
@@ -317,6 +344,54 @@ export default function App() {
             <ExternalLink className="w-3 h-3" />
           </a>
         </div>
+
+        {!hasConfiguredContract && (
+          <div className="border border-amber-800/60 bg-amber-950/20 px-4 py-3 space-y-3 text-xs font-mono">
+            <p className="text-amber-200">No verified MidnightPass contract is attached to this Preprod session.</p>
+            <button
+              type="button"
+              onClick={handleDeployContract}
+              disabled={isDeploying || !walletConnected}
+              className="inline-flex items-center gap-2 px-3 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 text-white"
+            >
+              <Layers className="w-4 h-4" />
+              <span>{isDeploying ? 'Deploying on Preprod...' : 'Deploy MidnightPass Contract'}</span>
+            </button>
+            {deployStatus && <p className="text-slate-300 break-all">{deployStatus}</p>}
+          </div>
+        )}
+
+        {walletConnected && (
+          <div className="border border-slate-800 bg-slate-900/60 px-4 py-3 flex items-center justify-between gap-3 text-xs font-mono">
+            <div className="text-slate-300 space-y-1">
+              <div>
+                Preprod DUST: <strong className={dustBalance && dustBalance > 0n ? "text-emerald-400" : "text-amber-300"}>
+                  {dustBalance === null ? "Checking..." : formatDust(dustBalance)}
+                </strong>
+              </div>
+              <div className="text-slate-500">
+                DUST cap: {dustCap === null ? "Checking..." : formatDust(dustCap)}
+              </div>
+              <div className="text-slate-500">
+                Unshielded token entries: {unshieldedBalances.length}
+              </div>
+              {unshieldedBalances.length > 0 && (
+                <div className="text-slate-500 break-all">
+                  Reported balances: {unshieldedBalances.map(([token, balance]) => `${token.slice(0, 12)}...=${balance}`).join(", ")}
+                </div>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={refreshDustBalance}
+              className="p-1.5 text-slate-300 hover:text-white hover:bg-slate-800 border border-slate-700"
+              title="Refresh DUST balance"
+              aria-label="Refresh DUST balance"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
 
         {/* Tab Navigation */}
         <div className="border-b border-slate-800 flex space-x-4">
@@ -367,7 +442,7 @@ export default function App() {
                   Select Gate & Execute ZK Witness Circuit
                 </h3>
                 <p className="text-xs text-slate-400 mt-1">
-                  Your private secret & nonce never leave your browser context. Compact ZK Circuit generates a proof locally.
+                  Your private secret and nonce remain in local private state. Lace generates the proof and submits the resulting transaction.
                 </p>
               </div>
 
@@ -447,7 +522,7 @@ export default function App() {
                 ) : (
                   <>
                     <ShieldCheck className="w-4 h-4" />
-                    <span>Generate ZK Proof & Claim Access</span>
+                    <span>Generate Proof & Submit to Preprod</span>
                   </>
                 )}
               </button>
@@ -467,13 +542,14 @@ export default function App() {
                   </div>
                   {proofResult.success && (
                     <div className="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-1.5 text-slate-300">
-                      <div><strong className="text-slate-400">Status:</strong> <span className="text-emerald-400">ACCESS GRANTED (ZK VERIFIED)</span></div>
+                      <div><strong className="text-slate-400">Status:</strong> <span className="text-emerald-400">PREPROD TRANSACTION FINALIZED</span></div>
+                      <div><strong className="text-slate-400">Transaction:</strong> <span className="text-cyan-300 break-all">{proofResult.txId}</span></div>
+                      <div><strong className="text-slate-400">Block:</strong> {proofResult.blockHeight}</div>
                       <div><strong className="text-slate-400">Computed Commitment:</strong> <span className="text-indigo-300 break-all">{proofResult.commitment}</span></div>
-                      <div><strong className="text-slate-400">Verified Nullifier:</strong> <span className="text-cyan-300 break-all">{proofResult.nullifier}</span></div>
-                      <div><strong className="text-slate-400">Gas Cost:</strong> {proofResult.gasCost}</div>
+                      <div><strong className="text-slate-400">Computed Nullifier:</strong> <span className="text-cyan-300 break-all">{proofResult.nullifier}</span></div>
                       <div><strong className="text-slate-400">Timestamp:</strong> {proofResult.timestamp}</div>
                       <div className="text-[11px] text-slate-400 pt-1 border-t border-slate-800/80">
-                        ℹ️ Nullifier written to on-chain ledger map <code className="text-indigo-300">nullifiers</code>. Future attempt with same secret will be rejected by ZK circuit assertion.
+                        The nullifier was written to the deployed contract. Reusing the same private credential will be rejected on-chain.
                       </div>
                     </div>
                   )}
@@ -519,42 +595,22 @@ export default function App() {
             <div>
               <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                 <Key className="w-5 h-5 text-indigo-400" />
-                Issuer Administration Portal
+                Issue Credential On-Chain
               </h3>
               <p className="text-xs text-slate-400 mt-1">
-                Only the authorized issuer matching public key <code className="text-indigo-300">issuer</code> on ledger can commit new credentials.
+                Only the authorized issuer matching public key <code className="text-indigo-300">issuer</code> on a deployed contract can commit credentials.
               </p>
             </div>
 
             <div className="space-y-4 text-xs font-mono">
-              <div>
-                <label className="text-slate-400 block mb-1">Target Holder Public Key</label>
-                <input 
-                  type="text" 
-                  value={newHolderPk}
-                  onChange={(e) => setNewHolderPk(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500" 
-                />
-              </div>
-
-              <div>
-                <label className="text-slate-400 block mb-1">Credential Type</label>
-                <select 
-                  value={issueType}
-                  onChange={(e) => setIssueType(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 focus:outline-none focus:border-indigo-500"
-                >
-                  <option value="age18">Age 18+ Verification Gate</option>
-                  <option value="daoVoter">DAO Member Gate</option>
-                  <option value="payrollPass">Confidential Pass</option>
-                </select>
-              </div>
-
+              <p className="text-slate-400 leading-relaxed">
+                The commitment is derived locally from the private credential and submitted to the deployed Preprod contract.
+              </p>
               <button
                 onClick={handleIssueCredential}
                 className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm rounded-xl transition shadow-lg shadow-indigo-600/20"
               >
-                Issue On-Chain Commitment (issueCredential)
+                Generate Proof & Issue Credential
               </button>
 
               {issueStatus && (

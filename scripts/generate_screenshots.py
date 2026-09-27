@@ -73,21 +73,5 @@ compile_text = [
 ]
 render_terminal_image("Terminal - Compact Compile Output", compile_text, "/root/midnight-pass/assets/compile_screenshot.png")
 
-# Generate Deploy Screenshot
-deploy_text = [
-    "$ npx midnight-js deploy --network preprod --contract contract/managed/midnight_pass",
-    "",
-    "Connecting to Midnight Preprod Network...",
-    "Proof Server: http://localhost:6300 (Status: OK)",
-    "Network ID: preprod (Ledger Protocol v22000)",
-    "",
-    "[DEPLOYSUCCESS] MidnightPass Smart Contract Deployed!",
-    "----------------------------------------------------------------------",
-    "Contract Address : 0x8f3e294b0a1c74d82f5e19b40d6c91a382f7105e492a83f120d9124a985b301c",
-    "Deploy Tx Hash   : 0x9b4a1f8c32d67e100e49502ab819c3e2187fa1094852c04e138a9102b489d",
-    "Block Height     : 1,482,904",
-    "Publisher PK     : 0x0101010101010101010101010101010101010101010101010101010101010101",
-    "----------------------------------------------------------------------",
-    "✓ Verified on Midnight Indexer GraphQL API: https://indexer.preprod.midnight.network"
-]
-render_terminal_image("Terminal - Contract Preprod Deployment Output", deploy_text, "/root/midnight-pass/assets/deploy_screenshot.png")
+# Deployment evidence must be captured from a finalized Preprod transaction.
+# This script intentionally does not synthesize deployment addresses or hashes.

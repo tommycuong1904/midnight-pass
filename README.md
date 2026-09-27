@@ -19,7 +19,7 @@ It allows users to prove identity thresholds (e.g. Age 18+ Gate, VIP DAO Members
 * 🚀 **Live dApp URL:** [https://frontend-gold-eight-muqigbzt6r.vercel.app](https://frontend-gold-eight-muqigbzt6r.vercel.app)
 * 📄 **Product Proposal:** [`PROPOSAL.md`](PROPOSAL.md) *(Standalone Level 3 proposal answering all 4 required questions)*
 * 📹 **Demo Video:** [`assets/demo_video.mp4`](assets/demo_video.mp4) *(Wallet Connect + Circuit Execution Walkthrough)*
-* 📜 **Preprod Contract Address:** `0x8f3e294b0a1c74d82f5e19b40d6c91a382f7105e492a83f120d9124a985b301c`
+* 📜 **Preprod Contract Address:** Not deployed or verified yet.
 * 🚰 **Testnet Faucet:** [Nethermind Preprod Faucet](https://midnight-tmnight-preprod.nethermind.dev/)
 
 ---
@@ -31,7 +31,7 @@ This repository contains the complete consolidated submission for **Level 1 (New
 | Milestone | Status | Key Deliverables |
 | :--- | :---: | :--- |
 | **Level 1: New Moon** | ✅ PASS | Toolchain set up, Compact contract written & compiled (`midnight_pass.compact`), ZK circuits generated in `contract/managed/`, 5 Vitest unit tests passing, Preprod deployment ready. |
-| **Level 2: Waxing Crescent** | ✅ PASS | Official Midnight.js SDK integration (`@midnight-ntwrk/dapp-connector-api`, `@midnight-ntwrk/midnight-js-network-provider`, `@midnight-ntwrk/midnight-js`), Lace Wallet UI connection, local `Contract.circuits.verifyEligibility()` ZK proof execution. |
+| **Level 2: Waxing Crescent** | ⚠️ DEPLOYMENT PENDING | Lace, Midnight.js providers, wallet-backed proving, transaction balancing/submission, and real `issueCredential`/`verifyEligibility` calls are implemented. A finalized Preprod deployment is still required. |
 | **Level 3: First Quarter** | ✅ PASS | Complete [`PROPOSAL.md`](PROPOSAL.md) answering all 4 required questions, 5/5 Vitest test suite, automated GitHub Actions CI/CD pipeline, full privacy model documentation. |
 
 ---
@@ -55,8 +55,8 @@ This repository contains the complete consolidated submission for **Level 1 (New
 ### 2. Vitest Simulator Test Suite Output (`npm test`)
 ![Vitest Simulator Output](assets/test_screenshot.png)
 
-### 3. Contract Preprod Deployment Output
-![Preprod Deployment](assets/deploy_screenshot.png)
+### 3. Preprod Deployment Evidence
+Deployment evidence will be added only after a confirmed Preprod transaction is available.
 
 ---
 
@@ -79,7 +79,7 @@ This repository contains the complete consolidated submission for **Level 1 (New
 
 * **Compact Compiler:** `0.31.1` (CLI wrapper `0.5.2`)
 * **Compact Runtime:** `@midnight-ntwrk/compact-runtime@0.16.0`
-* **Midnight.js SDK:** `@midnight-ntwrk/midnight-js@4.1.1` & `@midnight-ntwrk/midnight-js-network-provider@4.1.1`
+* **Midnight.js SDK:** `@midnight-ntwrk/midnight-js@4.1.1`, contract, Indexer, DApp Connector proof, ZK artifact, and private-state providers
 * **DApp Connector API:** `@midnight-ntwrk/dapp-connector-api@4.0.1`
 * **Node.js:** `v22.22.2`
 * **Network Target:** Midnight Preprod Testnet
@@ -99,8 +99,7 @@ midnight-pass/
 │       └── ci.yml             # GitHub Actions CI/CD Pipeline
 ├── assets/
 │   ├── compile_screenshot.png # Compiler Verification Screenshot
-│   ├── test_screenshot.png    # Vitest Simulator Suite Verification Screenshot
-│   └── deploy_screenshot.png  # Preprod Deployment Verification Screenshot
+│   └── test_screenshot.png    # Vitest Simulator Suite Verification Screenshot
 ├── contract/
 │   ├── src/
 │   │   └── midnight_pass.compact  # Compact Smart Contract (ZK Circuits & Ledger)
