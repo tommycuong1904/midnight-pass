@@ -32,14 +32,19 @@ function formatDust(amount: bigint): string {
 
 function findMidnightWallet(): InitialAPI | undefined {
   const wallets = Object.values(window.midnight ?? {});
-  return wallets.find((wallet) => {
+  const matches = (wallet: InitialAPI, value: string) => {
     const identity = `${wallet.name} ${wallet.rdns}`.toLowerCase();
-    return identity.includes("lace");
-  }) ?? wallets[0];
+    return identity.includes(value);
+  };
+
+  return wallets.find((wallet) => matches(wallet, "1am"))
+    ?? wallets.find((wallet) => matches(wallet, "lace"))
+    ?? wallets[0];
 }
 
 export default function App() {
   const [walletConnected, setWalletConnected] = useState(false);
+  const [walletName, setWalletName] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
   const [connectedApi, setConnectedApi] = useState<ConnectedAPI | null>(null);
   const [contractAddress, setContractAddress] = useState(configuredContractAddress);
@@ -107,6 +112,7 @@ export default function App() {
       }
 
       setConnectedApi(api);
+      setWalletName(wallet.name);
       setWalletAddress(address.shieldedAddress);
       setDustBalance(dust.balance);
       setDustCap(dust.cap);
@@ -115,6 +121,7 @@ export default function App() {
       setWalletConnected(true);
     } catch (error) {
       setConnectedApi(null);
+      setWalletName("");
       setWalletAddress("");
       setDustBalance(null);
       setDustCap(null);
@@ -129,6 +136,7 @@ export default function App() {
     setWalletConnected(false);
     setWalletAddress("");
     setConnectedApi(null);
+    setWalletName("");
     setDustBalance(null);
     setDustCap(null);
     setDustAddress("");
@@ -267,7 +275,7 @@ export default function App() {
           {walletConnected ? (
             <div className="flex items-center space-x-3">
               <div className="text-right hidden sm:block">
-                <p className="text-xs font-mono text-emerald-400">Midnight Wallet Connected</p>
+                <p className="text-xs font-mono text-emerald-400">{walletName || 'Midnight Wallet'} Connected</p>
                 <p className="text-xs text-slate-400 font-mono">{walletAddress.slice(0, 10)}...{walletAddress.slice(-4)}</p>
               </div>
               <button 
