@@ -14,7 +14,7 @@ import { Contract, pureCircuits } from './generated/midnight_pass/contract/index
 
 export const PRIVATE_STATE_ID = 'midnightPassPrivateState';
 export const CONTRACT_STORAGE_KEY = 'midnight-pass-preprod-contract';
-export const PREPROD_CONTRACT_ADDRESS = 'e9fde2ce9cfcda1b94cf5985cc31ef695ba7611f48db3c9bda42adaf45a6465b';
+export const PREPROD_CONTRACT_ADDRESS = 'eee200f6454dee797661e8197934ac8ac461a45737ca6979bdab38169f8e4731';
 const ASSET_PATH = '/midnight-pass';
 const STORAGE_PASSWORD = 'MidnightPass-Preprod-Local-State-2026!';
 const LOCAL_SECRET_KEY = 'midnight-pass-local-secret-key';

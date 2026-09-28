@@ -3,8 +3,8 @@
 **Program:** New Moon to Full: Monthly Moonshots on Midnight  
 **Submission Level:** Level 3 (First Quarter)  
 **Project:** MidnightPass  
-**Contract Address (Preprod):** `e9fde2ce9cfcda1b94cf5985cc31ef695ba7611f48db3c9bda42adaf45a6465b`
-**Verified Circuit Transaction (Preprod):** `009e2a6d7035a4a5e4ac9e089a9fb2ff218fd97566789bab2e00b056baaa89c746` (block `2744166`)
+**Contract Address (Preprod):** `eee200f6454dee797661e8197934ac8ac461a45737ca6979bdab38169f8e4731`
+**Verified Circuit Transaction (Preprod):** Indexer hash `d0fa45d6f794fba7781b7d666f036b4952bd7695a3b8500b8964cb73388d4bee` (block `2747405`)
 **Live Demo:** [https://frontend-gold-eight-muqigbzt6r.vercel.app](https://frontend-gold-eight-muqigbzt6r.vercel.app)
 
 ---
@@ -65,7 +65,7 @@ MidnightPass strictly separates public ledger state from private witness state t
 - [x] Automated GitHub Actions CI/CD pipeline (`compile` + `test` + `build`).
 - [x] Web frontend dApp integrated with the Midnight DApp Connector API and compatible Preprod wallets.
 - [x] Midnight.js provider pipeline for Indexer queries, wallet-backed proof generation, transaction balancing, and submission.
-- [x] Verified Preprod deployment at `e9fde2ce9cfcda1b94cf5985cc31ef695ba7611f48db3c9bda42adaf45a6465b`.
+- [x] Verified Preprod deployment at `eee200f6454dee797661e8197934ac8ac461a45737ca6979bdab38169f8e4731`.
 - [x] Finalized `issueCredential` and `verifyEligibility` transactions, with the resulting nullifier verified through the Preprod Indexer.
 
 ### Phase 2: Testnet Hardening & Multi-Schema Credentials

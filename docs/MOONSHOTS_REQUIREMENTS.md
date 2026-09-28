@@ -98,18 +98,17 @@ Compact contract and are ready to use Midnight.js and the DApp Connector.
 
 - [x] Public GitHub repository with README.
 - [x] Live demo URL, such as Vercel or Netlify.
-- [x] Verifiable deployed Preprod contract address: `e9fde2ce9cfcda1b94cf5985cc31ef695ba7611f48db3c9bda42adaf45a6465b`.
+- [x] Verifiable deployed Preprod contract address: `eee200f6454dee797661e8197934ac8ac461a45737ca6979bdab38169f8e4731`.
 - [x] Demo video showing the 1AM Preprod connection and finalized circuit transaction evidence.
 - [x] README documentation of the privacy claim.
 - [x] At least 8 meaningful commits.
 
 ### Verified Preprod Evidence
 
-- `issueCredential`: block `2744027`, transaction `00611d4c54ca26e928a18f019023fbe0afe5d002f4f8fc272eb2854279e48b4ec3`.
-- `verifyEligibility`: block `2744166`, transaction `009e2a6d7035a4a5e4ac9e089a9fb2ff218fd97566789bab2e00b056baaa89c746`.
-- Commitment: `0x60eca8f98f7fe4e3d0d0612e4374af5ffe93dad60aa6ce895305f3a8fe341da7`.
-- Nullifier: `0x3a90a03c011270b209e182759357447e898f73056bb385b18d94a36da574dd1b`.
-- Independent Indexer query after finalization returned `totalIssued=1`, `totalVerified=1`, and `nullifierUsed=true`.
+- Deployment: block `2747330`, Indexer transaction hash `1be6c15834c56563d21cdb26d3cd036b5ccf66baef97797a7f4f410604f5e913`.
+- `issueCredential`: block `2747350`, Indexer transaction hash `44edc35172690efeae04510f7bf9d286ecf02b1df3fa37c3fb827e2c9dff5d70`.
+- `verifyEligibility`: block `2747405`, Indexer transaction hash `d0fa45d6f794fba7781b7d666f036b4952bd7695a3b8500b8964cb73388d4bee`.
+- Independent Indexer queries confirm the deployment, issue, and verification actions target the same contract address.
 
 ### Pending User Actions
 
@@ -141,7 +140,7 @@ Compact contract and are ready to use Midnight.js and the DApp Connector.
 > The contract address is not available on the Preprod environment.
 
 **Resolved September 28, 2026:** deployed and queried successfully through the
-Preprod Indexer at `e9fde2ce9cfcda1b94cf5985cc31ef695ba7611f48db3c9bda42adaf45a6465b`.
+Preprod Indexer at `eee200f6454dee797661e8197934ac8ac461a45737ca6979bdab38169f8e4731`.
 
 ### Mission
 

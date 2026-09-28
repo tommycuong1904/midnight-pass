@@ -19,9 +19,10 @@ It allows users to prove identity thresholds (e.g. Age 18+ Gate, VIP DAO Members
 * 🚀 **Live dApp URL:** [https://frontend-gold-eight-muqigbzt6r.vercel.app](https://frontend-gold-eight-muqigbzt6r.vercel.app)
 * 📄 **Product Proposal:** [`PROPOSAL.md`](PROPOSAL.md) *(Standalone Level 3 proposal answering all 4 required questions)*
 * 📹 **Demo Video:** [`assets/demo_video.mp4`](assets/demo_video.mp4) *(1AM Preprod wallet, privacy boundary, and finalized transaction evidence walkthrough)*
-* 📜 **Preprod Contract Address:** `e9fde2ce9cfcda1b94cf5985cc31ef695ba7611f48db3c9bda42adaf45a6465b`
-* 🪪 **Credential Issue:** block `2744027`, transaction `00611d4c54ca26e928a18f019023fbe0afe5d002f4f8fc272eb2854279e48b4ec3`
-* 🔐 **Eligibility Verification:** block `2744166`, transaction `009e2a6d7035a4a5e4ac9e089a9fb2ff218fd97566789bab2e00b056baaa89c746`
+* 📜 **Preprod Contract Address:** `eee200f6454dee797661e8197934ac8ac461a45737ca6979bdab38169f8e4731`
+* 🚀 **Deployment:** block `2747330`, Indexer transaction hash `1be6c15834c56563d21cdb26d3cd036b5ccf66baef97797a7f4f410604f5e913`
+* 🪪 **Credential Issue:** block `2747350`, Indexer transaction hash `44edc35172690efeae04510f7bf9d286ecf02b1df3fa37c3fb827e2c9dff5d70`
+* 🔐 **Eligibility Verification:** block `2747405`, Indexer transaction hash `d0fa45d6f794fba7781b7d666f036b4952bd7695a3b8500b8964cb73388d4bee`
 * 🚰 **Testnet Faucet:** [Nethermind Preprod Faucet](https://midnight-tmnight-preprod.nethermind.dev/)
 
 ---
@@ -58,7 +59,11 @@ This repository contains the complete consolidated submission for **Level 1 (New
 ![Vitest Simulator Output](assets/test_screenshot.png)
 
 ### 3. Preprod Deployment Evidence
-Deployment evidence will be added only after a confirmed Preprod transaction is available.
+The current contract was deployed in Preprod block `2747330`; its verified
+Indexer transaction hash is
+`1be6c15834c56563d21cdb26d3cd036b5ccf66baef97797a7f4f410604f5e913`.
+The same contract finalized `issueCredential` in block `2747350` and
+`verifyEligibility` in block `2747405`.
 
 ---
 
