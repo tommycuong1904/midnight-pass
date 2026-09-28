@@ -65,7 +65,7 @@ applications on Midnight who have basic frontend or full-stack experience.
 
 ## Level 2: Waxing Crescent
 
-**Status:** Ready for resubmission - remediation verified on Preprod
+**Status:** Technical remediation verified on Preprod - demo and resubmission pending
 **Reviewed:** September 25, 2026, 18:38:40 UTC
 
 ### Mission
@@ -110,6 +110,12 @@ Compact contract and are ready to use Midnight.js and the DApp Connector.
 - Commitment: `0x60eca8f98f7fe4e3d0d0612e4374af5ffe93dad60aa6ce895305f3a8fe341da7`.
 - Nullifier: `0x3a90a03c011270b209e182759357447e898f73056bb385b18d94a36da574dd1b`.
 - Independent Indexer query after finalization returned `totalIssued=1`, `totalVerified=1`, and `nullifierUsed=true`.
+
+### Pending User Actions
+
+- [ ] Record a new demo video from the browser wallet showing the verified contract address, wallet connection, `issueCredential`, and `verifyEligibility` transaction results. The existing video predates the remediation and must not be submitted as current evidence.
+- [ ] Replace `assets/demo_video.mp4` with the new recording.
+- [ ] Resubmit Level 2 to the review team after the video is replaced.
 
 ### Remediation Requirements
 
