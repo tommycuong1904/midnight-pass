@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "mkdir -p src/generated/midnight_pass/contract && cp ../contract/managed/midnight_pass/contract/index.js ../contract/managed/midnight_pass/contract/index.js.map ../contract/managed/midnight_pass/contract/index.d.ts src/generated/midnight_pass/contract/",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
@@ -12,6 +13,7 @@
     "@midnight-ntwrk/compact-js": "^2.5.1",
     "@midnight-ntwrk/compact-runtime": "^0.16.0",
     "@midnight-ntwrk/dapp-connector-api": "^4.0.1",
+    "@midnight-ntwrk/ledger-v8": "8.1.0",
     "@midnight-ntwrk/midnight-js": "^4.1.1",
     "@midnight-ntwrk/midnight-js-contracts": "^4.1.1",
     "@midnight-ntwrk/midnight-js-dapp-connector-proof-provider": "^4.1.1",
@@ -21,6 +23,7 @@
     "@midnight-ntwrk/midnight-js-network-id": "^4.1.1",
     "@midnight-ntwrk/midnight-js-types": "^4.1.1",
     "@midnight-ntwrk/midnight-js-utils": "^4.1.1",
+    "@midnight-ntwrk/onchain-runtime-v3": "3.0.0",
     "lucide-react": "^0.380.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -36,5 +39,9 @@
     "typescript": "^5.4.5",
     "vite": "^5.2.11",
     "vite-plugin-wasm": "^3.6.0"
+  },
+  "overrides": {
+    "@midnight-ntwrk/ledger-v8": "8.1.0",
+    "@midnight-ntwrk/onchain-runtime-v3": "3.0.0"
   }
 }

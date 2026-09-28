@@ -10,7 +10,7 @@ import { CostModel, Transaction } from '@midnight-ntwrk/midnight-js-protocol/led
 import type { MidnightProviders } from '@midnight-ntwrk/midnight-js-types';
 import { fromHex, toHex } from '@midnight-ntwrk/midnight-js-utils';
 
-import { Contract, pureCircuits } from '../../contract/managed/midnight_pass/contract/index.js';
+import { Contract, pureCircuits } from './generated/midnight_pass/contract/index.js';
 
 export const PRIVATE_STATE_ID = 'midnightPassPrivateState';
 export const CONTRACT_STORAGE_KEY = 'midnight-pass-preprod-contract';
