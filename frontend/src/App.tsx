@@ -47,6 +47,7 @@ export default function App() {
   const [walletError, setWalletError] = useState<string | null>(null);
   const [dustBalance, setDustBalance] = useState<bigint | null>(null);
   const [dustCap, setDustCap] = useState<bigint | null>(null);
+  const [dustAddress, setDustAddress] = useState("");
   const [unshieldedBalances, setUnshieldedBalances] = useState<Array<[string, bigint]>>([]);
   const [activeTab, setActiveTab] = useState<'holder' | 'issuer' | 'privacy'>('holder');
   
@@ -92,10 +93,11 @@ export default function App() {
       if (typeof api.hintUsage === "function") {
         await api.hintUsage(["getConnectionStatus", "getShieldedAddresses"]);
       }
-      const [connection, address, dust, balances] = await Promise.all([
+      const [connection, address, dust, dustAddressResult, balances] = await Promise.all([
         api.getConnectionStatus(),
         api.getShieldedAddresses(),
         api.getDustBalance(),
+        api.getDustAddress(),
         api.getUnshieldedBalances(),
       ]);
 
@@ -107,6 +109,7 @@ export default function App() {
       setWalletAddress(address.shieldedAddress);
       setDustBalance(dust.balance);
       setDustCap(dust.cap);
+      setDustAddress(dustAddressResult.dustAddress);
       setUnshieldedBalances(Object.entries(balances));
       setWalletConnected(true);
     } catch (error) {
@@ -114,6 +117,7 @@ export default function App() {
       setWalletAddress("");
       setDustBalance(null);
       setDustCap(null);
+      setDustAddress("");
       setUnshieldedBalances([]);
       setWalletConnected(false);
       setWalletError(error instanceof Error ? error.message : "Lace Wallet connection failed.");
@@ -126,6 +130,7 @@ export default function App() {
     setConnectedApi(null);
     setDustBalance(null);
     setDustCap(null);
+    setDustAddress("");
     setUnshieldedBalances([]);
     setWalletError(null);
   };
@@ -372,6 +377,11 @@ export default function App() {
               <div className="text-slate-500">
                 DUST cap: {dustCap === null ? "Checking..." : formatDust(dustCap)}
               </div>
+              {dustAddress && (
+                <div className="text-slate-500 break-all">
+                  DUST address: <span className="text-slate-300">{dustAddress}</span>
+                </div>
+              )}
               <div className="text-slate-500">
                 Unshielded token entries: {unshieldedBalances.length}
               </div>
