@@ -65,8 +65,8 @@ export default function App() {
   
   // Holder Form State
   const [selectedGate, setSelectedGate] = useState("age18");
-  const [userSecret, setUserSecret] = useState("holder_private_secret_9942");
-  const [userNonce, setUserNonce] = useState("credential_salt_nonce_1883");
+  const [userSecret, setUserSecret] = useState(() => randomCredentialValue("holder"));
+  const [userNonce, setUserNonce] = useState(() => randomCredentialValue("nonce"));
   const [isProving, setIsProving] = useState(false);
   const [proofResult, setProofResult] = useState<{
     success: boolean;
@@ -648,6 +648,14 @@ export default function App() {
               <p className="text-slate-400 leading-relaxed">
                 The commitment is derived locally from the private credential and submitted to the deployed Preprod contract.
               </p>
+              <button
+                type="button"
+                onClick={generateCredentialData}
+                className="w-full py-2.5 border border-cyan-700/60 bg-cyan-950/30 hover:bg-cyan-900/40 text-cyan-300 font-medium text-sm rounded-xl transition inline-flex items-center justify-center gap-2"
+              >
+                <RefreshCw className="w-4 h-4" />
+                <span>Generate New Credential Data</span>
+              </button>
               <button
                 onClick={handleIssueCredential}
                 className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm rounded-xl transition shadow-lg shadow-indigo-600/20"
