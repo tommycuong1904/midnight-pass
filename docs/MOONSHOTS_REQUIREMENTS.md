@@ -98,7 +98,7 @@ Compact contract and are ready to use Midnight.js and the DApp Connector.
 
 - [ ] Public GitHub repository with README.
 - [ ] Live demo URL, such as Vercel or Netlify.
-- [ ] Verifiable deployed Preprod contract address.
+- [x] Verifiable deployed Preprod contract address: `e9fde2ce9cfcda1b94cf5985cc31ef695ba7611f48db3c9bda42adaf45a6465b`.
 - [ ] Demo video showing wallet connection and a successful circuit call.
 - [ ] README documentation of the privacy claim.
 - [ ] At least 8 meaningful commits.
@@ -125,6 +125,9 @@ Compact contract and are ready to use Midnight.js and the DApp Connector.
 > Invalid contract address: `0x8f3e294b0a1c74d82f5e19b40d6c91a382f7105e492a83f120d9124a985b301c`
 >
 > The contract address is not available on the Preprod environment.
+
+**Resolved September 28, 2026:** deployed and queried successfully through the
+Preprod Indexer at `e9fde2ce9cfcda1b94cf5985cc31ef695ba7611f48db3c9bda42adaf45a6465b`.
 
 ### Mission
 

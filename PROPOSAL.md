@@ -3,7 +3,7 @@
 **Program:** New Moon to Full: Monthly Moonshots on Midnight  
 **Submission Level:** Level 3 (First Quarter)  
 **Project:** MidnightPass  
-**Contract Address (Preprod):** Not deployed or verified yet.
+**Contract Address (Preprod):** `e9fde2ce9cfcda1b94cf5985cc31ef695ba7611f48db3c9bda42adaf45a6465b`
 **Live Demo:** [https://frontend-gold-eight-muqigbzt6r.vercel.app](https://frontend-gold-eight-muqigbzt6r.vercel.app)
 
 ---

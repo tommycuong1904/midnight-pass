@@ -14,6 +14,7 @@ import { Contract, pureCircuits } from '../../contract/managed/midnight_pass/con
 
 export const PRIVATE_STATE_ID = 'midnightPassPrivateState';
 export const CONTRACT_STORAGE_KEY = 'midnight-pass-preprod-contract';
+export const PREPROD_CONTRACT_ADDRESS = 'e9fde2ce9cfcda1b94cf5985cc31ef695ba7611f48db3c9bda42adaf45a6465b';
 const ASSET_PATH = '/midnight-pass';
 const STORAGE_PASSWORD = 'MidnightPass-Preprod-Local-State-2026!';
 const LOCAL_SECRET_KEY = 'midnight-pass-local-secret-key';
@@ -230,5 +231,5 @@ export async function verifyEligibility(
 export function configuredContractAddress(): string {
   return localStorage.getItem(CONTRACT_STORAGE_KEY)
     ?? import.meta.env.VITE_MIDNIGHT_CONTRACT_ADDRESS?.trim()
-    ?? '';
+    ?? PREPROD_CONTRACT_ADDRESS;
 }

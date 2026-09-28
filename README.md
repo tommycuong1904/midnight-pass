@@ -19,7 +19,7 @@ It allows users to prove identity thresholds (e.g. Age 18+ Gate, VIP DAO Members
 * 🚀 **Live dApp URL:** [https://frontend-gold-eight-muqigbzt6r.vercel.app](https://frontend-gold-eight-muqigbzt6r.vercel.app)
 * 📄 **Product Proposal:** [`PROPOSAL.md`](PROPOSAL.md) *(Standalone Level 3 proposal answering all 4 required questions)*
 * 📹 **Demo Video:** [`assets/demo_video.mp4`](assets/demo_video.mp4) *(Wallet Connect + Circuit Execution Walkthrough)*
-* 📜 **Preprod Contract Address:** Not deployed or verified yet.
+* 📜 **Preprod Contract Address:** `e9fde2ce9cfcda1b94cf5985cc31ef695ba7611f48db3c9bda42adaf45a6465b`
 * 🚰 **Testnet Faucet:** [Nethermind Preprod Faucet](https://midnight-tmnight-preprod.nethermind.dev/)
 
 ---
@@ -31,7 +31,7 @@ This repository contains the complete consolidated submission for **Level 1 (New
 | Milestone | Status | Key Deliverables |
 | :--- | :---: | :--- |
 | **Level 1: New Moon** | ✅ PASS | Toolchain set up, Compact contract written & compiled (`midnight_pass.compact`), ZK circuits generated in `contract/managed/`, 5 Vitest unit tests passing, Preprod deployment ready. |
-| **Level 2: Waxing Crescent** | ⚠️ DEPLOYMENT PENDING | Lace, Midnight.js providers, wallet-backed proving, transaction balancing/submission, and real `issueCredential`/`verifyEligibility` calls are implemented. A finalized Preprod deployment is still required. |
+| **Level 2: Waxing Crescent** | 🔄 ON-CHAIN VALIDATION | The contract is deployed and verified on Preprod. Midnight.js providers, wallet-backed proving, transaction balancing/submission, and real `issueCredential`/`verifyEligibility` calls are implemented; final circuit-call transactions remain to be recorded. |
 | **Level 3: First Quarter** | ✅ PASS | Complete [`PROPOSAL.md`](PROPOSAL.md) answering all 4 required questions, 5/5 Vitest test suite, automated GitHub Actions CI/CD pipeline, full privacy model documentation. |
 
 ---
