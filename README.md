@@ -106,7 +106,7 @@ midnight-pass/
 │   └── managed/               # Generated ZK Circuits, Keys, & JS/TS Bindings
 ├── frontend/
 │   ├── src/
-│   │   ├── App.tsx            # Frontend UI with Lace Wallet & Midnight.js ZK Gate
+│   │   ├── App.tsx            # Frontend UI with Midnight wallet & Midnight.js ZK Gate
 │   │   ├── main.tsx
 │   │   └── index.css
 │   ├── package.json

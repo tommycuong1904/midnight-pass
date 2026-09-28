@@ -30,11 +30,12 @@ function formatDust(amount: bigint): string {
   return `${whole.toLocaleString()}.${fraction}`;
 }
 
-function findLaceWallet(): InitialAPI | undefined {
-  return Object.values(window.midnight ?? {}).find((wallet) => {
+function findMidnightWallet(): InitialAPI | undefined {
+  const wallets = Object.values(window.midnight ?? {});
+  return wallets.find((wallet) => {
     const identity = `${wallet.name} ${wallet.rdns}`.toLowerCase();
     return identity.includes("lace");
-  });
+  }) ?? wallets[0];
 }
 
 export default function App() {
@@ -72,24 +73,24 @@ export default function App() {
 
   const hasConfiguredContract = /^[0-9a-fA-F]{64}$/.test(contractAddress.replace(/^0x/, ''));
 
-  // Connect Lace Wallet via Midnight DApp Connector API
+  // Connect a browser wallet via the Midnight DApp Connector API.
   const handleConnectWallet = async () => {
     setWalletError(null);
 
-    const lace = findLaceWallet();
-    if (!lace) {
+    const wallet = findMidnightWallet();
+    if (!wallet) {
       const availableWallets = Object.values(window.midnight ?? {})
         .map((wallet) => wallet.name)
         .filter(Boolean);
       const detail = availableWallets.length > 0
         ? ` Detected wallet providers: ${availableWallets.join(", ")}.`
         : "";
-      setWalletError(`Lace Wallet was not detected in this browser.${detail}`);
+      setWalletError(`No Midnight-compatible wallet was detected in this browser.${detail}`);
       return;
     }
 
     try {
-      const api = await lace.connect("preprod");
+      const api = await wallet.connect("preprod");
       if (typeof api.hintUsage === "function") {
         await api.hintUsage(["getConnectionStatus", "getShieldedAddresses"]);
       }
@@ -102,7 +103,7 @@ export default function App() {
       ]);
 
       if (connection.status !== "connected" || connection.networkId !== "preprod") {
-        throw new Error("Lace Wallet is not connected to Midnight Preprod.");
+        throw new Error("The wallet is not connected to Midnight Preprod.");
       }
 
       setConnectedApi(api);
@@ -120,7 +121,7 @@ export default function App() {
       setDustAddress("");
       setUnshieldedBalances([]);
       setWalletConnected(false);
-      setWalletError(error instanceof Error ? error.message : "Lace Wallet connection failed.");
+      setWalletError(error instanceof Error ? error.message : "Midnight wallet connection failed.");
     }
   };
 
@@ -154,7 +155,7 @@ export default function App() {
 
   const handleDeployContract = async () => {
     if (!connectedApi) {
-      setDeployStatus('Connect Lace Wallet on Preprod first.');
+      setDeployStatus('Connect a Midnight wallet on Preprod first.');
       return;
     }
     if (!dustBalance || dustBalance <= 0n) {
@@ -180,7 +181,7 @@ export default function App() {
     setProofResult(null);
 
     try {
-      if (!connectedApi) throw new Error('Connect Lace Wallet on Preprod first.');
+      if (!connectedApi) throw new Error('Connect a Midnight wallet on Preprod first.');
       if (!hasConfiguredContract) throw new Error('Deploy or configure a verified Preprod contract first.');
       if (!dustBalance || dustBalance <= 0n) throw new Error('A positive DUST balance is required.');
 
@@ -213,7 +214,7 @@ export default function App() {
 
   const handleIssueCredential = async () => {
     if (!connectedApi) {
-      setIssueStatus("Connect Lace Wallet on Preprod before preparing an issuer transaction.");
+      setIssueStatus("Connect a Midnight wallet on Preprod before preparing an issuer transaction.");
       return;
     }
 
@@ -266,7 +267,7 @@ export default function App() {
           {walletConnected ? (
             <div className="flex items-center space-x-3">
               <div className="text-right hidden sm:block">
-                <p className="text-xs font-mono text-emerald-400">Lace Wallet Connected</p>
+                <p className="text-xs font-mono text-emerald-400">Midnight Wallet Connected</p>
                 <p className="text-xs text-slate-400 font-mono">{walletAddress.slice(0, 10)}...{walletAddress.slice(-4)}</p>
               </div>
               <button 
@@ -282,7 +283,7 @@ export default function App() {
               className="flex items-center space-x-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm rounded-lg shadow-lg shadow-indigo-600/30 transition"
             >
               <Wallet className="w-4 h-4" />
-              <span>Connect Lace Wallet</span>
+              <span>Connect Midnight Wallet</span>
             </button>
           )}
         </div>
@@ -452,7 +453,7 @@ export default function App() {
                   Select Gate & Execute ZK Witness Circuit
                 </h3>
                 <p className="text-xs text-slate-400 mt-1">
-                  Your private secret and nonce remain in local private state. Lace generates the proof and submits the resulting transaction.
+                  Your private secret and nonce remain in local private state. Your wallet generates the proof and submits the resulting transaction.
                 </p>
               </div>
 
