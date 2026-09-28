@@ -131,7 +131,7 @@ Compact contract and are ready to use Midnight.js and the DApp Connector.
 
 ## Level 3: First Quarter
 
-**Status:** Revisions needed  
+**Status:** Technical remediation complete - replacement demo and resubmission pending
 **Reviewed:** September 25, 2026, 18:38:47 UTC
 
 ### Review Feedback
@@ -181,11 +181,16 @@ state.
 
 ### Submission Checklist
 
-- [ ] Public GitHub repository with complete README.
-- [ ] Live demo URL.
-- [ ] Screenshot of test output showing at least 3 passing tests.
-- [ ] CI/CD badge or workflow file with passing runs.
+- [x] Public GitHub repository with complete README.
+- [x] Live demo URL.
+- [x] Screenshot of test output showing 5 passing tests.
+- [x] CI/CD badge and workflow file with passing runs.
 - [ ] One-minute demo video showing full functionality.
-- [ ] README privacy-model section explaining what observers can and cannot learn.
-- [ ] Product proposal from the provided idea list, submitted for approval.
-- [ ] At least 10 meaningful commits.
+- [x] README privacy-model section explaining what observers can and cannot learn.
+- [x] Root `PROPOSAL.md` answers product/users, why Midnight, public/private/disclosure, and Mainnet scope.
+- [x] At least 10 meaningful commits (22 verified before this remediation update).
+
+### Level 3 Pending User Actions
+
+- [ ] Record and replace the one-minute demo video. The recording must show the verified Preprod address and finalized circuit interaction rather than the historical rejected address.
+- [ ] Resubmit Level 3 to the review team after replacing the video.

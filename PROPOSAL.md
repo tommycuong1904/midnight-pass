@@ -9,7 +9,7 @@
 
 ---
 
-## 1. Product & Target Users (What & Who)
+## 1. What Is the Product and Who Is It For?
 
 ### Product Overview
 **MidnightPass** is a privacy-preserving, zero-knowledge credential verification and eligibility gating protocol built on the Midnight Network using the Compact smart contract language.
@@ -24,17 +24,17 @@ In traditional Web3 applications, token-gating or credential verification requir
 
 ---
 
-## 2. Why Midnight (Essential Architectural Fit)
+## 2. Why Does This Product Need Midnight?
 
-Midnight Network is uniquely uniquely architected to power **MidnightPass** due to its native support for programmable data protection and zero-knowledge smart contracts:
+Midnight Network is architected to power **MidnightPass** through native programmable data protection and zero-knowledge smart contracts:
 
 * **Dual-State Ledger Model:** Traditional blockchains (Ethereum, Solana) enforce public state visibility for all smart contract state changes. Midnight provides a hybrid architecture where sensitive state resides in off-chain private witnesses while cryptographic commitments and nullifiers are managed on-chain.
 * **Compact Language ZK Primitives:** Midnight's Compact smart contract language provides native support for `witness` functions, `disclose()` boundaries, and collision-resistant `persistentHash` primitives. This enables writing provably secure ZK circuits directly in high-level code.
-* **Native Lace Wallet & DApp Connector:** Midnight's ecosystem offers seamless off-chain witness execution in browser extensions (Lace Wallet), enabling user-side ZK proof generation without exposing secrets to external servers.
+* **Midnight DApp Connector:** Compatible browser wallets such as 1AM and Lace authorize wallet-backed proving, transaction balancing, and submission without exposing wallet keys to the DApp.
 
 ---
 
-## 3. Data Model: Public / Private / Disclosure Boundary
+## 3. What Is Public, Private, and Disclosed?
 
 MidnightPass strictly separates public ledger state from private witness state to guarantee zero linkability:
 
@@ -42,30 +42,31 @@ MidnightPass strictly separates public ledger state from private witness state t
 * `export ledger issuer: Bytes<32>` — The public key of the authorized issuing authority.
 * `export ledger credentials: Map<Bytes<32>, Boolean>` — Set of valid credential commitments (`hash(holder, secret, nonce, credType)`). Observer sees *that* a commitment exists, but cannot reverse it to deduce holder key or secret.
 * `export ledger nullifiers: Map<Bytes<32>, Boolean>` — Single-use nullifier hashes (`hash(holder, secret, nonce, credType)` under `mnpass:null:` domain). Prevents double-claiming while preventing correlation with commitments.
-* `export ledger totalIssued: Counter` & `totalVerified: Counter` — Aggregate aggregate metrics.
+* `export ledger totalIssued: Counter` and `totalVerified: Counter` — Aggregate metrics.
 
 ### B. Off-Chain Private Witness (Hidden State)
-* `witness localSecretKey(): Bytes<32>` — Holder's private key, kept strictly inside the local wallet context.
+* `witness localSecretKey(): Bytes<32>` — Application-level credential secret key stored in encrypted browser private state. It is separate from the connected wallet's signing keys.
 * `witness getCredentialSecret(): Bytes<32>` — Private salt used in the credential commitment preimage.
 * `witness getCredentialNonce(): Bytes<32>` — Random salt ensuring zero linkability between claims.
-* `witness getCredentialType(): Bytes<32>` — Specific credential type requested for verification.
+* `verifyEligibility(credType: Bytes<32>)` — The credential type is a private circuit parameter by default. It is not written to the public ledger.
 
 ### C. Disclosure Boundary Analysis
 1. **Commitment Phase (`issueCredential`):** Issuer commits `credentialCommitment(holder, secret, nonce, credType)` to on-chain `credentials` map.
 2. **Verification Phase (`verifyEligibility`):** User executes ZK circuit locally. The circuit re-computes `commitment` from private witness inputs and asserts its existence in the on-chain map.
-3. **Nullifier Claiming (`disclose(nullifier)`):** Only the single-use `nullifier` hash is disclosed and written to `nullifiers` map. The holder's identity, public key, secret, and original commitment remain 100% private and unlinked.
+3. **Nullifier Claiming (`disclose(nullifier)`):** Only the single-use `nullifier` hash is disclosed and written to the `nullifiers` map. The holder identity, credential secret, nonce, credential type, and link between the nullifier and stored commitment are not disclosed.
 
 ---
 
-## 4. Mainnet Scope & Roadmap
+## 4. What Is the Mainnet Scope?
 
 ### Phase 1: Preprod Testnet (Current Deliverable — Levels 1-3)
 - [x] Compact smart contract (`midnight_pass.compact`) with pure circuits & nullifier verification.
 - [x] 5/5 passing Vitest test suite covering constructor, credential issuance, ZK proof verification, and double-claim rejection.
 - [x] Automated GitHub Actions CI/CD pipeline (`compile` + `test` + `build`).
-- [x] Web frontend dApp integrated with Midnight DApp Connector API & Lace Wallet.
+- [x] Web frontend dApp integrated with the Midnight DApp Connector API and compatible Preprod wallets.
 - [x] Midnight.js provider pipeline for Indexer queries, wallet-backed proof generation, transaction balancing, and submission.
-- [ ] Verified Preprod contract deployment (requires a confirmed transaction).
+- [x] Verified Preprod deployment at `e9fde2ce9cfcda1b94cf5985cc31ef695ba7611f48db3c9bda42adaf45a6465b`.
+- [x] Finalized `issueCredential` and `verifyEligibility` transactions, with the resulting nullifier verified through the Preprod Indexer.
 
 ### Phase 2: Testnet Hardening & Multi-Schema Credentials
 - [x] Direct integration with the Midnight Pub-Sub Indexer and Lace proving provider.

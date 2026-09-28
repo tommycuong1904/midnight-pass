@@ -34,7 +34,7 @@ This repository contains the complete consolidated submission for **Level 1 (New
 | :--- | :---: | :--- |
 | **Level 1: New Moon** | ✅ PASS | Toolchain set up, Compact contract written & compiled (`midnight_pass.compact`), ZK circuits generated in `contract/managed/`, 5 Vitest unit tests passing, Preprod deployment ready. |
 | **Level 2: Waxing Crescent** | ⏳ DEMO PENDING | Technical remediation is complete: the contract and both circuit transactions are finalized and independently verified through the Preprod Indexer. A new user-recorded demo video and team resubmission remain pending. |
-| **Level 3: First Quarter** | ✅ PASS | Complete [`PROPOSAL.md`](PROPOSAL.md) answering all 4 required questions, 5/5 Vitest test suite, automated GitHub Actions CI/CD pipeline, full privacy model documentation. |
+| **Level 3: First Quarter** | ⏳ DEMO PENDING | [`PROPOSAL.md`](PROPOSAL.md) answers all four required questions; tests, CI/CD, privacy documentation, and verified Preprod evidence are complete. A replacement one-minute demo and team resubmission remain pending. |
 
 ---
 
