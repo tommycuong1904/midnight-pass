@@ -30,6 +30,12 @@ function formatDust(amount: bigint): string {
   return `${whole.toLocaleString()}.${fraction}`;
 }
 
+function randomCredentialValue(prefix: string): string {
+  const bytes = crypto.getRandomValues(new Uint8Array(10));
+  const suffix = Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+  return `${prefix}_${suffix}`;
+}
+
 function findMidnightWallet(): InitialAPI | undefined {
   const wallets = Object.values(window.midnight ?? {});
   const matches = (wallet: InitialAPI, value: string) => {
@@ -142,6 +148,13 @@ export default function App() {
     setDustAddress("");
     setUnshieldedBalances([]);
     setWalletError(null);
+  };
+
+  const generateCredentialData = () => {
+    setUserSecret(randomCredentialValue("holder"));
+    setUserNonce(randomCredentialValue("nonce"));
+    setProofResult(null);
+    setIssueStatus(null);
   };
 
   const refreshDustBalance = async () => {
@@ -492,13 +505,23 @@ export default function App() {
 
               {/* Witness Inputs */}
               <div className="space-y-4 bg-slate-950/60 border border-slate-800/80 p-4 rounded-xl">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="text-xs font-mono text-cyan-400 flex items-center gap-1.5">
                     <Key className="w-3.5 h-3.5" /> Off-Chain Witness Parameters (Private Inputs)
                   </span>
-                  <span className="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded font-mono">
-                    Local Only — Never Sent to Chain
-                  </span>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded font-mono">
+                      Local Only — Never Sent to Chain
+                    </span>
+                    <button
+                      type="button"
+                      onClick={generateCredentialData}
+                      className="inline-flex items-center gap-1.5 px-2 py-1 text-[10px] font-mono text-cyan-300 border border-cyan-700/60 bg-cyan-950/30 hover:bg-cyan-900/40 rounded transition"
+                    >
+                      <RefreshCw className="w-3 h-3" />
+                      <span>Generate New Data</span>
+                    </button>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
