@@ -65,7 +65,7 @@ applications on Midnight who have basic frontend or full-stack experience.
 
 ## Level 2: Waxing Crescent
 
-**Status:** Revisions needed - deployment not verified  
+**Status:** Ready for resubmission - remediation verified on Preprod
 **Reviewed:** September 25, 2026, 18:38:40 UTC
 
 ### Mission
@@ -96,12 +96,20 @@ Compact contract and are ready to use Midnight.js and the DApp Connector.
 
 ### Submission Checklist
 
-- [ ] Public GitHub repository with README.
-- [ ] Live demo URL, such as Vercel or Netlify.
+- [x] Public GitHub repository with README.
+- [x] Live demo URL, such as Vercel or Netlify.
 - [x] Verifiable deployed Preprod contract address: `e9fde2ce9cfcda1b94cf5985cc31ef695ba7611f48db3c9bda42adaf45a6465b`.
 - [ ] Demo video showing wallet connection and a successful circuit call.
-- [ ] README documentation of the privacy claim.
-- [ ] At least 8 meaningful commits.
+- [x] README documentation of the privacy claim.
+- [x] At least 8 meaningful commits.
+
+### Verified Preprod Evidence
+
+- `issueCredential`: block `2744027`, transaction `00611d4c54ca26e928a18f019023fbe0afe5d002f4f8fc272eb2854279e48b4ec3`.
+- `verifyEligibility`: block `2744166`, transaction `009e2a6d7035a4a5e4ac9e089a9fb2ff218fd97566789bab2e00b056baaa89c746`.
+- Commitment: `0x60eca8f98f7fe4e3d0d0612e4374af5ffe93dad60aa6ce895305f3a8fe341da7`.
+- Nullifier: `0x3a90a03c011270b209e182759357447e898f73056bb385b18d94a36da574dd1b`.
+- Independent Indexer query after finalization returned `totalIssued=1`, `totalVerified=1`, and `nullifierUsed=true`.
 
 ### Remediation Requirements
 

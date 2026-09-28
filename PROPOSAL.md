@@ -4,6 +4,7 @@
 **Submission Level:** Level 3 (First Quarter)  
 **Project:** MidnightPass  
 **Contract Address (Preprod):** `e9fde2ce9cfcda1b94cf5985cc31ef695ba7611f48db3c9bda42adaf45a6465b`
+**Verified Circuit Transaction (Preprod):** `009e2a6d7035a4a5e4ac9e089a9fb2ff218fd97566789bab2e00b056baaa89c746` (block `2744166`)
 **Live Demo:** [https://frontend-gold-eight-muqigbzt6r.vercel.app](https://frontend-gold-eight-muqigbzt6r.vercel.app)
 
 ---
