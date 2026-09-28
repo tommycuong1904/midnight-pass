@@ -18,7 +18,7 @@ It allows users to prove identity thresholds (e.g. Age 18+ Gate, VIP DAO Members
 
 * 🚀 **Live dApp URL:** [https://frontend-gold-eight-muqigbzt6r.vercel.app](https://frontend-gold-eight-muqigbzt6r.vercel.app)
 * 📄 **Product Proposal:** [`PROPOSAL.md`](PROPOSAL.md) *(Standalone Level 3 proposal answering all 4 required questions)*
-* 📹 **Demo Video:** [`assets/demo_video.mp4`](assets/demo_video.mp4) *(58-second 1AM Preprod wallet, privacy boundary, and finalized transaction evidence walkthrough)*
+* 📹 **Demo Video:** [`assets/demo_video.mp4`](assets/demo_video.mp4) *(Temporary browser walkthrough; final submission recording pending)*
 * 📜 **Preprod Contract Address:** `e9fde2ce9cfcda1b94cf5985cc31ef695ba7611f48db3c9bda42adaf45a6465b`
 * 🪪 **Credential Issue:** block `2744027`, transaction `00611d4c54ca26e928a18f019023fbe0afe5d002f4f8fc272eb2854279e48b4ec3`
 * 🔐 **Eligibility Verification:** block `2744166`, transaction `009e2a6d7035a4a5e4ac9e089a9fb2ff218fd97566789bab2e00b056baaa89c746`
@@ -33,8 +33,8 @@ This repository contains the complete consolidated submission for **Level 1 (New
 | Milestone | Status | Key Deliverables |
 | :--- | :---: | :--- |
 | **Level 1: New Moon** | ✅ PASS | Toolchain set up, Compact contract written & compiled (`midnight_pass.compact`), ZK circuits generated in `contract/managed/`, 5 Vitest unit tests passing, Preprod deployment ready. |
-| **Level 2: Waxing Crescent** | ⏳ RESUBMIT PENDING | Technical remediation is complete: the contract and both circuit transactions are finalized and independently verified through the Preprod Indexer. The replacement browser demo is included; team resubmission remains pending. |
-| **Level 3: First Quarter** | ⏳ RESUBMIT PENDING | [`PROPOSAL.md`](PROPOSAL.md) answers all four required questions; tests, CI/CD, privacy documentation, verified Preprod evidence, and the replacement browser demo are complete. Team resubmission remains pending. |
+| **Level 2: Waxing Crescent** | ⏳ DEMO PENDING | Technical remediation is complete: the contract and both circuit transactions are finalized and independently verified through the Preprod Indexer. The final submission video and team resubmission remain pending. |
+| **Level 3: First Quarter** | ⏳ DEMO PENDING | [`PROPOSAL.md`](PROPOSAL.md) answers all four required questions; tests, CI/CD, privacy documentation, and verified Preprod evidence are complete. The final submission video and team resubmission remain pending. |
 
 ---
 
@@ -157,7 +157,7 @@ npm test
 cd frontend
 npm run dev
 ```
-Open `http://localhost:3000` in your browser.
+Open the Vite URL shown in the terminal (by default `http://localhost:5173`).
 
 ### 5. Production Build Verification
 ```bash
