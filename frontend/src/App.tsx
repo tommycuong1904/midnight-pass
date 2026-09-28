@@ -84,6 +84,7 @@ export default function App() {
   const [issueSucceeded, setIssueSucceeded] = useState(false);
 
   const hasConfiguredContract = /^[0-9a-fA-F]{64}$/.test(contractAddress.replace(/^0x/, ''));
+  const issuerMismatch = issueStatus?.includes('Only authorized issuer can issue credentials') ?? false;
 
   // Connect a browser wallet via the Midnight DApp Connector API.
   const handleConnectWallet = async () => {
@@ -192,6 +193,7 @@ export default function App() {
       const result = await deployMidnightPass(connectedApi, createPrivateState(userSecret, userNonce));
       setContractAddress(result.contractAddress);
       setDeployStatus(`Deployed in block ${result.blockHeight}. Transaction: ${result.txId}`);
+      generateCredentialData();
     } catch (error) {
       setDeployStatus(`Deployment failed: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
@@ -667,6 +669,36 @@ export default function App() {
               >
                 Generate Proof & Issue Credential
               </button>
+
+              {issuerMismatch && (
+                <div className="space-y-3 border border-amber-500/40 bg-amber-950/20 rounded-xl p-4 text-amber-100">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 mt-0.5 shrink-0 text-amber-300" />
+                    <div className="space-y-1">
+                      <p className="font-semibold">This wallet is not the issuer for the current contract.</p>
+                      <p className="text-amber-200/80 leading-relaxed">
+                        The current contract cannot be changed. Deploying a new contract makes the connected wallet its issuer and does not modify the existing contract.
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleDeployContract}
+                    disabled={isDeploying || !walletConnected || !dustBalance || dustBalance <= 0n}
+                    className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-800 disabled:text-slate-500 text-slate-950 font-semibold text-sm rounded-lg transition inline-flex items-center justify-center gap-2"
+                  >
+                    <Layers className="w-4 h-4" />
+                    <span>{isDeploying ? 'Deploying New Contract...' : 'Deploy New Contract with This Wallet'}</span>
+                  </button>
+                  {deployStatus && <p className="text-xs break-all text-amber-100/80">{deployStatus}</p>}
+                </div>
+              )}
+
+              {deployStatus && !issuerMismatch && (
+                <div className="p-3 bg-emerald-950/30 border border-emerald-500/40 rounded-lg text-emerald-200 break-all">
+                  {deployStatus}
+                </div>
+              )}
 
               {issueStatus && (
                 <div className="space-y-3">
