@@ -61,7 +61,7 @@ export default function App() {
   const [dustCap, setDustCap] = useState<bigint | null>(null);
   const [dustAddress, setDustAddress] = useState("");
   const [unshieldedBalances, setUnshieldedBalances] = useState<Array<[string, bigint]>>([]);
-  const [activeTab, setActiveTab] = useState<'holder' | 'issuer' | 'privacy'>('holder');
+  const [activeTab, setActiveTab] = useState<'holder' | 'issuer' | 'privacy'>('issuer');
   
   // Holder Form State
   const [selectedGate, setSelectedGate] = useState("age18");
@@ -81,6 +81,7 @@ export default function App() {
 
   // Issuer Form State
   const [issueStatus, setIssueStatus] = useState<string | null>(null);
+  const [issueSucceeded, setIssueSucceeded] = useState(false);
 
   const hasConfiguredContract = /^[0-9a-fA-F]{64}$/.test(contractAddress.replace(/^0x/, ''));
 
@@ -155,6 +156,7 @@ export default function App() {
     setUserNonce(randomCredentialValue("nonce"));
     setProofResult(null);
     setIssueStatus(null);
+    setIssueSucceeded(false);
   };
 
   const refreshDustBalance = async () => {
@@ -250,6 +252,7 @@ export default function App() {
     }
 
     setIssueStatus('Generating proof and submitting issueCredential to Preprod...');
+    setIssueSucceeded(false);
     try {
       const result = await issueCredential(
         connectedApi,
@@ -258,8 +261,10 @@ export default function App() {
         selectedGate,
       );
       setIssueStatus(`Credential issued in block ${result.blockHeight}. Transaction: ${result.txId}`);
+      setIssueSucceeded(true);
     } catch (error) {
       setIssueStatus(`Credential issue failed: ${error instanceof Error ? error.message : String(error)}`);
+      setIssueSucceeded(false);
     }
   };
 
@@ -426,34 +431,34 @@ export default function App() {
         )}
 
         {/* Tab Navigation */}
-        <div className="border-b border-slate-800 flex space-x-4">
-          <button
-            onClick={() => setActiveTab('holder')}
-            className={`pb-3 text-sm font-medium flex items-center space-x-2 border-b-2 transition ${
-              activeTab === 'holder' 
-                ? 'border-cyan-400 text-cyan-400' 
-                : 'border-transparent text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <ShieldCheck className="w-4 h-4" />
-            <span>1. Gate Verification (User)</span>
-          </button>
-
+        <div className="border-b border-slate-800 flex gap-4 overflow-x-auto">
           <button
             onClick={() => setActiveTab('issuer')}
-            className={`pb-3 text-sm font-medium flex items-center space-x-2 border-b-2 transition ${
-              activeTab === 'issuer' 
-                ? 'border-indigo-400 text-indigo-400' 
+            className={`pb-3 text-sm font-medium flex shrink-0 items-center space-x-2 border-b-2 transition ${
+              activeTab === 'issuer'
+                ? 'border-indigo-400 text-indigo-400'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
             <Key className="w-4 h-4" />
-            <span>2. Issue Credential (Admin)</span>
+            <span>1. Issue Credential (Admin)</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('holder')}
+            className={`pb-3 text-sm font-medium flex shrink-0 items-center space-x-2 border-b-2 transition ${
+              activeTab === 'holder'
+                ? 'border-cyan-400 text-cyan-400'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <ShieldCheck className="w-4 h-4" />
+            <span>2. Verify Eligibility (User)</span>
           </button>
 
           <button
             onClick={() => setActiveTab('privacy')}
-            className={`pb-3 text-sm font-medium flex items-center space-x-2 border-b-2 transition ${
+            className={`pb-3 text-sm font-medium flex shrink-0 items-center space-x-2 border-b-2 transition ${
               activeTab === 'privacy' 
                 ? 'border-indigo-400 text-indigo-400' 
                 : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -464,7 +469,7 @@ export default function App() {
           </button>
         </div>
 
-        {/* TAB 1: HOLDER VERIFICATION */}
+        {/* TAB 2: HOLDER VERIFICATION */}
         {activeTab === 'holder' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-6">
@@ -631,7 +636,7 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB 2: ISSUER ADMIN */}
+        {/* TAB 1: ISSUER ADMIN */}
         {activeTab === 'issuer' && (
           <div className="max-w-2xl bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-6">
             <div>
@@ -664,9 +669,23 @@ export default function App() {
               </button>
 
               {issueStatus && (
-                <div className="p-3 bg-indigo-950/40 border border-indigo-500/30 rounded-lg text-indigo-300 font-mono text-xs flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-indigo-400" />
-                  <span>{issueStatus}</span>
+                <div className="space-y-3">
+                  <div className="p-3 bg-indigo-950/40 border border-indigo-500/30 rounded-lg text-indigo-300 font-mono text-xs flex items-center gap-2">
+                    {issueSucceeded
+                      ? <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                      : <AlertCircle className="w-4 h-4 text-indigo-400 shrink-0" />}
+                    <span>{issueStatus}</span>
+                  </div>
+                  {issueSucceeded && (
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('holder')}
+                      className="w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white font-medium text-sm rounded-xl transition inline-flex items-center justify-center gap-2"
+                    >
+                      <ShieldCheck className="w-4 h-4" />
+                      <span>Continue to Verify Eligibility</span>
+                    </button>
+                  )}
                 </div>
               )}
             </div>
