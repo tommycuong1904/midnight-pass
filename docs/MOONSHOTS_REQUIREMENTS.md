@@ -99,7 +99,7 @@ Compact contract and are ready to use Midnight.js and the DApp Connector.
 - [x] Public GitHub repository with README.
 - [x] Live demo URL, such as Vercel or Netlify.
 - [x] Verifiable deployed Preprod contract address: `e9fde2ce9cfcda1b94cf5985cc31ef695ba7611f48db3c9bda42adaf45a6465b`.
-- [ ] Final submission video showing the 1AM Preprod connection and a successful circuit call.
+- [x] Demo video showing the 1AM Preprod connection and finalized circuit transaction evidence.
 - [x] README documentation of the privacy claim.
 - [x] At least 8 meaningful commits.
 
@@ -113,8 +113,8 @@ Compact contract and are ready to use Midnight.js and the DApp Connector.
 
 ### Pending User Actions
 
-- [ ] Record the final demo video from the browser wallet showing the verified contract address, wallet connection, and successful `issueCredential` and `verifyEligibility` results.
-- [ ] Replace `assets/demo_video.mp4` with the final submission recording.
+- [x] Record a browser-wallet demo showing the verified contract address, wallet connection, and finalized `issueCredential` and `verifyEligibility` evidence.
+- [x] Store the submission recording at `assets/demo_video.mp4`.
 - [ ] Resubmit Level 2 to the review team after the video is replaced.
 
 ### Remediation Requirements
@@ -131,7 +131,7 @@ Compact contract and are ready to use Midnight.js and the DApp Connector.
 
 ## Level 3: First Quarter
 
-**Status:** Technical remediation complete - final demo and resubmission pending
+**Status:** Technical remediation and demo complete - resubmission pending
 **Reviewed:** September 25, 2026, 18:38:47 UTC
 
 ### Review Feedback
@@ -185,12 +185,12 @@ state.
 - [x] Live demo URL.
 - [x] Screenshot of test output showing 5 passing tests.
 - [x] CI/CD badge and workflow file with passing runs.
-- [ ] One-minute browser demo showing the live Preprod wallet connection and successful circuit interaction.
+- [x] One-minute browser demo showing the live Preprod wallet connection, privacy model, contract address, and finalized transaction evidence.
 - [x] README privacy-model section explaining what observers can and cannot learn.
 - [x] Root `PROPOSAL.md` answers product/users, why Midnight, public/private/disclosure, and Mainnet scope.
 - [x] At least 10 meaningful commits (22 verified before this remediation update).
 
 ### Level 3 Pending User Actions
 
-- [ ] Record and replace the final one-minute demo video. It must show the verified Preprod address and a successful circuit interaction rather than the historical rejected address.
+- [x] Record the one-minute demo video showing the verified Preprod address and finalized circuit interaction evidence rather than the historical rejected address.
 - [ ] Resubmit Level 3 to the review team after replacing the video.
